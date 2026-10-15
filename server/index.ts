@@ -1,33 +1,19 @@
 /**
  * MacroQuest runtime entrypoint: CopilotRuntime + Hono HTTP server.
  *
- * The actual behavior lives in the sibling modules — config (env), agent
- * (intent routing), meal-surface / goals (generation + validation),
- * open-generative-ui (model-to-CopilotKit streaming), model-client (llama.cpp /
- * OpenRouter transport), prompts and schemas (model I/O contracts).
+ * This branch serves the chat agent only. Config, the agent, and the model
+ * client live in the sibling modules.
  */
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import {
-  CopilotRuntime,
-  createCopilotRuntimeHandler,
-  InMemoryAgentRunner,
-} from '@copilotkit/runtime/v2';
-import { agent, macroQuestA2UIToolName } from './agent';
+import { CopilotRuntime, createCopilotRuntimeHandler, InMemoryAgentRunner } from '@copilotkit/runtime/v2';
+import { agent } from './agent';
 import { modelBaseUrl, modelName, modelProvider, port } from './config';
-
-const basicA2UICatalogId = 'https://a2ui.org/specification/v0_9/basic_catalog.json';
 
 const runtime = new CopilotRuntime({
   agents: { default: agent },
   runner: new InMemoryAgentRunner(),
-  a2ui: {
-    injectA2UITool: macroQuestA2UIToolName,
-    a2uiToolNames: [macroQuestA2UIToolName],
-    defaultCatalogId: basicA2UICatalogId,
-  },
-  openGenerativeUI: true,
 });
 
 const app = new Hono();
@@ -35,7 +21,7 @@ const app = new Hono();
 app.use(
   '*',
   cors({
-    origin: ['http://127.0.0.1:4302', 'http://localhost:4302'],
+    origin: ['http://localhost:4200'],
     allowMethods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowHeaders: [
       'Content-Type',
@@ -80,6 +66,6 @@ server.on('error', (error: NodeJS.ErrnoException) => {
 });
 
 console.log(`MacroQuest runtime listening at http://127.0.0.1:${port}/api/copilotkit`);
-console.log(`Model provider: ${modelProvider} (custom MacroQuest agent → A2UI / sandbox)`);
+console.log(`Model provider: ${modelProvider} (custom MacroQuest chat agent)`);
 console.log(`Model endpoint: ${modelBaseUrl}`);
 console.log(`Model name: ${modelName}`);

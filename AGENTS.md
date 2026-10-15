@@ -1,8 +1,11 @@
 # MacroQuest implementation guidance
 
-MacroQuest is an Angular 22 demonstration application for CopilotKit Angular,
-A2UI, Open Generative UI, and NgRx Signal Store. Keep implementation changes
-small, visible, and reliable enough for a live talk.
+This branch is the talk's starting point. MacroQuest is an Angular 22 meal log
+with a CopilotKit chat and an NgRx Signal Store. The agent answers from a
+system prompt and the store snapshot. A2UI, Open Generative UI, and frontend
+tools are intentionally absent. Add one of them only when implementing that
+beat in `talk-script.md`. Keep implementation changes small, visible, and
+reliable enough for a live talk.
 
 The Angular feature lives under `src/app/macroquest/`. Preserve its existing
 boundaries: pure nutrition types and calculations belong in `domain/`, state
@@ -11,12 +14,8 @@ belongs in `ui/`. `MacroQuestStore` composes `withMacroQuest()` before
 `withCopilotKit()` because the CopilotKit feature consumes the store state and
 methods established by the domain feature.
 
-The runtime under `server/` validates model output and transports it through
-CopilotKit. The model authors A2UI component trees and sandbox payloads; do not
-replace that with hardcoded server-side layouts or fallback widgets. Preserve
-the sandbox trust boundary: generated code communicates through
-`Websandbox.connection.remote`, not browser storage, cookies, or same-origin
-network access.
+The runtime under `server/` streams chat text through CopilotKit. It reads the
+store snapshot from `input.context` and does not emit tool calls.
 
 Use the repository's Angular 22 and signal-based patterns. Preserve keyboard
 and assistive-technology behavior for UI changes. Do not alter secrets, local

@@ -238,48 +238,4 @@
   .macro-shell .copilot-panel copilot-chat-view-disclaimer {
     @apply block px-4 pt-2 text-center text-xs leading-snug text-base-content/60;
   }
-
-  .macro-shell .copilot-panel copilot-a2ui-activity-renderer {
-    @apply my-3 block;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface {
-    @apply block overflow-hidden rounded-box border border-primary/20 bg-base-100 shadow-md;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface .a2ui-surface {
-    @apply p-4;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface h2 {
-    @apply mb-2 text-lg font-semibold text-base-content;
-  }
-
-  /* Lit's styleMap serializes inline styles WITHOUT a space after the colon
-     ("flex-direction:row"), so keep both attribute spellings covered. */
-  .macro-shell .copilot-panel cpk-a2ui-surface div[style*="flex-direction: row"],
-  .macro-shell .copilot-panel cpk-a2ui-surface div[style*="flex-direction:row"] {
-    @apply my-3 flex-wrap gap-2;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface div[style*="flex-direction: row"] > cpk-a2ui-node,
-  .macro-shell .copilot-panel cpk-a2ui-surface div[style*="flex-direction:row"] > cpk-a2ui-node {
-    flex: 1 1 6rem;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface div[style*="flex-direction: row"] span,
-  .macro-shell .copilot-panel cpk-a2ui-surface div[style*="flex-direction:row"] span {
-    @apply block min-h-10 rounded-box border border-base-300 bg-base-200 px-3 py-2 font-semibold text-base-content;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface button {
-    @apply mt-2 min-h-11 w-full px-4 py-3 font-bold;
-    border-radius: var(--radius-field) !important;
-    background: var(--color-primary) !important;
-    color: var(--color-primary-content) !important;
-  }
-
-  .macro-shell .copilot-panel cpk-a2ui-surface button span {
-    @apply min-h-0 border-0 bg-transparent p-0 text-inherit;
-  }
 }

@@ -1,12 +1,10 @@
-# MacroQuest Angular A2UI Demo
+# MacroQuest
 
-MacroQuest is an Angular demo app for showing CopilotKit Angular A2UI,
-CopilotKit chat controls, NgRx Signal Store, and a local Gemma 4 model server.
-
-Gemma authors both the A2UI component tree and the complete Open Generative UI
-sandbox payload. The runtime validates A2UI, streams sandbox tool arguments,
-and lets CopilotKit render the result through its standard middleware and
-Angular renderer.
+This branch is the talk's starting point. MacroQuest is an Angular meal log
+with a CopilotKit chat, an NgRx Signal Store, and a local Gemma 4 model server.
+The agent answers questions from a system prompt and a snapshot of the store.
+The later beats (a frontend tool, human in the loop, A2UI, and Open Generative
+UI) are written down in `talk-script.md` and are not in this branch.
 
 ## Configuration
 
@@ -69,11 +67,10 @@ Then open `http://127.0.0.1:4302`. Ctrl+C stops all three processes.
 You can still start them separately with `pnpm run start:llama`,
 `pnpm run start:runtime`, and `pnpm run start:ui`.
 
-## OpenRouter (same agentic UI, remote model)
+## OpenRouter (same chat agent, remote model)
 
-The MacroQuest **custom agent** (intent routing, A2UI catalog surfaces, sandbox
-widgets) runs for both local llama.cpp and OpenRouter. Switching provider only
-changes which OpenAI-compatible `/chat/completions` endpoint is called.
+The chat agent runs for both local llama.cpp and OpenRouter. Switching provider
+only changes which OpenAI-compatible `/chat/completions` endpoint is called.
 
 Set your key and model in `.env` (gitignored):
 
@@ -96,9 +93,8 @@ Relevant variables:
 | `OPENROUTER_API_KEY`     | Your OpenRouter API key                    |
 | `OPENROUTER_MODEL`       | Model id (default `google/gemini-2.5-pro`) |
 
-With `COPILOT_MODEL_PROVIDER=openrouter`, meal analysis still emits A2UI catalog
-trees (`cpk-a2ui-surface` in chat) and the lighter-swap sandbox still works —
-no local llama required.
+With `COPILOT_MODEL_PROVIDER=openrouter`, the same chat agent answers. No local
+llama server is required.
 
 ## Runtime
 
@@ -112,26 +108,9 @@ pnpm run start:runtime
 The runtime also defaults to these Gemma 4 settings, so the explicit env vars
 are mainly documentation and useful when switching ports.
 
-The runtime is a local Hono wrapper around `@copilotkit/runtime/v2`. It should
-not construct the A2UI layout itself. The local Gemma response must include:
-
-```json
-{
-  "mealDraft": { "title": "...", "items": [] },
-  "a2ui": { "surfaceId": "...", "components": [], "data": {} }
-}
-```
-
-The backend validates the model-generated catalog tree, emits the A2UI render
-tool call through CopilotKit middleware, and the Angular SDK renders the
-resulting `a2ui-surface` activity.
-
-For sandbox requests, the runtime does not construct HTML or substitute a
-fallback widget. It streams Gemma's grammar-constrained
-`generateSandboxedUi` arguments in CopilotKit's required order:
-`initialHeight`, `placeholderMessages`, `css`, `html`, `jsFunctions`, then
-`jsExpressions`. CopilotKit progressively renders the CSS/HTML and then runs
-the model-authored behavior in `@jetbrains/websandbox`.
+The runtime is a local Hono wrapper around `@copilotkit/runtime/v2`. Each run
+streams a chat reply. The system prompt includes the store snapshot the Angular
+app attached with `connectAgentContext`.
 
 ## Angular App
 
@@ -141,49 +120,11 @@ pnpm run start:ui
 
 Open `http://127.0.0.1:4302`.
 
-## Generating UI: Prompt Sequence
+## Talk
 
-> For the full architecture walkthrough, prompt inventory, and the complete
-> six-step demo runbook, see [docs/PRESENTATION.md](docs/PRESENTATION.md).
-
-The demo renders model-generated UI two different ways. Run these prompts in
-order from the chat panel (or click the matching starter suggestions).
-
-1. **Rich A2UI surface — analyze a meal.** Gemma authors an A2UI component tree
-   that Angular renders through the Lit-backed `cpk-a2ui-surface`, and logs the
-   draft into `MacroQuestStore` via the `logMealDraft` frontend tool.
-
-   ```text
-   Analyze a grilled chicken bowl with rice and beans.
-   ```
-
-   A rich, model-generated meal card appears in the chat and the dashboard
-   updates with the new draft as the selected meal.
-
-2. **Sandboxed Open Generative UI — follow up with a lighter swap.** With the
-   meal from step 1 selected, ask for a lighter version. The model generates an
-   interactive UI inside the `@jetbrains/websandbox` iframe whose controls call
-   the `applyMacroSwap` sandbox function to write the swap back into the store.
-
-   ```text
-   Suggest a lighter version of my current meal.
-   ```
-
-   Applying the swap from the generated sandbox UI updates the selected meal's
-   macros in `MacroQuestStore` (and the dashboard) in place.
-
-3. **Model-authored chart — visualize progress.** Gemma generates a compact
-   dashboard with KPI cards, two self-contained inline SVG charts, and a working
-   percentage/absolute toggle. No chart markup or chart library configuration
-   is hardcoded in the server.
-
-   ```text
-   Show me a chart of my macros versus my goals.
-   ```
-
-> A selected meal gives the best result. The generated action also carries the
-> literal source macros, so a restored Swap Lab can still apply after the host
-> selection or meal list has been reset.
+Load mock data, then ask the chat a question. The two starter prompts are
+"What does this app track?" and "How much can I still eat today?" The full
+sequence is in `talk-script.md`.
 
 ## Source Layout
 
@@ -192,14 +133,13 @@ The Angular source is split as one feature area:
 ```text
 src/app/macroquest/
   domain/       Pure nutrition types, calculations, meal factory, sample data
-  application/  NgRx Signal Store and CopilotKit frontend tool registration
+  application/  NgRx Signal Store and the CopilotKit state snapshot
   ui/           Standalone Angular components with signal inputs and outputs
 ```
 
 The root `App` only mounts `<mq-shell />`. `MacroQuestStore` is composed from
 `signalStoreFeature` slices: `withMacroQuest` holds the trusted nutrition state
-and its derived signals, and `withCopilot` registers the CopilotKit chat/tool
-wiring. The Open Generative UI sandbox bridge lives in `macroquest-sandbox.ts`.
+and its derived signals, and `withCopilot` forwards that snapshot to the agent.
 
 ## Verification
 
@@ -214,15 +154,6 @@ Run the browser integration test:
 ```bash
 pnpm run test:integration
 ```
-
-Record and verify the real image workflow:
-
-```bash
-node scripts/record-real-web-image-workflow.mjs
-```
-
-This checks that the chat renders a Lit-backed A2UI activity surface from the
-model-generated A2UI tool payload.
 
 Print the model server command without downloading:
 

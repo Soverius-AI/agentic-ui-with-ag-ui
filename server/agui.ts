@@ -1,21 +1,16 @@
 /**
- * AG-UI message plumbing: reading the run input (messages, context,
- * forwardedProps) and emitting the events the agent streams back. No model
- * calls and no business logic live here.
+ * AG-UI message plumbing: reading the run input (messages, context) and
+ * emitting the text events the agent streams back. No model calls and no
+ * business logic live here.
  */
-import { randomUUID } from 'node:crypto';
 import { EventType } from '@ag-ui/core';
 import type {
   AssistantMessage,
   Context,
   Message,
   TextMessageChunkEvent,
-  ToolCallArgsEvent,
-  ToolCallEndEvent,
-  ToolCallStartEvent,
   UserMessage,
 } from '@ag-ui/core';
-import { a2uiApplyActionSchema } from './schemas';
 
 export function userText(content: UserMessage['content']): string {
   if (typeof content === 'string') return content;
@@ -37,15 +32,6 @@ export function userImageUrl(content: UserMessage['content']): string | undefine
 export const isUser = (message: Message): message is UserMessage => message.role === 'user';
 export const isAssistant = (message: Message): message is AssistantMessage =>
   message.role === 'assistant';
-
-export function lastUserMessage(messages: Message[]): UserMessage | undefined {
-  return [...messages].reverse().find(isUser);
-}
-
-export function latestMessageHasImage(messages: Message[]): boolean {
-  const latest = messages.at(-1);
-  return latest !== undefined && isUser(latest) && userImageUrl(latest.content) !== undefined;
-}
 
 export type ChatHistoryMessage = { role: 'user' | 'assistant'; content: string };
 
@@ -70,12 +56,6 @@ export function toChatHistory(messages: Message[], limit: number): ChatHistoryMe
   return history.slice(-limit);
 }
 
-export function historyDigest(messages: Message[], limit: number): string {
-  return toChatHistory(messages, limit)
-    .map((message) => `${message.role}: ${message.content}`)
-    .join('\n');
-}
-
 /**
  * Trusted Angular store state forwarded by the frontend via
  * connectAgentContext. This is what lets the model answer questions about
@@ -89,42 +69,6 @@ export function contextBlock(context: Context[]): string {
   return lines.length > 0 ? `Trusted app state:\n${lines.join('\n')}` : '';
 }
 
-/**
- * The tool whose result ended the previous run, when the current run is a
- * tool-result continuation (last message has role "tool"). The runtime
- * re-invokes the agent after every frontend tool result; without this check
- * those continuation runs were misrouted into a fresh meal analysis.
- */
-export function trailingToolResult(messages: Message[]): { toolName: string } | undefined {
-  const last = messages.at(-1);
-  if (!last || last.role !== 'tool') return undefined;
-
-  const toolCallId = last.toolCallId;
-  const call = messages
-    .filter(isAssistant)
-    .flatMap((message) => message.toolCalls ?? [])
-    .find((toolCall) => toolCall.id === toolCallId);
-
-  return { toolName: call?.function.name ?? '' };
-}
-
-/** The a2uiAction the Angular surface forwards when an apply button is pressed. */
-export function getApplyMealDraftAction(forwardedProps: unknown) {
-  const action = a2uiApplyActionSchema.safeParse(
-    (forwardedProps as Record<string, unknown> | undefined)?.a2uiAction,
-  );
-  if (!action.success || action.data.userAction.name !== 'applyMealDraft') {
-    return undefined;
-  }
-
-  const {
-    surfaceId = 'macroquest-meal-analysis',
-    sourceComponentId = '',
-    timestamp = '',
-  } = action.data.userAction;
-  return { surfaceId, actionKey: `${surfaceId}:${sourceComponentId}:${timestamp}` };
-}
-
 // ---------------------------------------------------------------------------
 // Outgoing AG-UI events
 // ---------------------------------------------------------------------------
@@ -136,31 +80,4 @@ export function textChunk(messageId: string, delta: string): TextMessageChunkEve
     messageId,
     delta,
   };
-}
-
-export function* toolCallEvents(
-  parentMessageId: string,
-  toolCallName: string,
-  args: unknown,
-): Generator<ToolCallStartEvent | ToolCallArgsEvent | ToolCallEndEvent> {
-  const toolCallId = randomUUID();
-  const startEvent: ToolCallStartEvent = {
-    type: EventType.TOOL_CALL_START,
-    parentMessageId,
-    toolCallId,
-    toolCallName,
-  };
-  const argsEvent: ToolCallArgsEvent = {
-    type: EventType.TOOL_CALL_ARGS,
-    toolCallId,
-    delta: JSON.stringify(args),
-  };
-  const endEvent: ToolCallEndEvent = {
-    type: EventType.TOOL_CALL_END,
-    toolCallId,
-  };
-
-  yield startEvent;
-  yield argsEvent;
-  yield endEvent;
 }
