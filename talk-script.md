@@ -1,8 +1,8 @@
 # MacroQuest talk script
 
-The `init` branch contains beats 1 and 2. Beats 3 through 6 are not in this branch.
+The `init` branch contains beat 1. Beats 2 through 6 are not in this branch.
 
-Five beats, then one optional closer. Each beat adds one idea. Load mock data and stay on Today before you start.
+Five beats, then one optional closer. Each beat adds one idea. The meal log is already loaded. Stay on Today before you start.
 
 Say the names out loud the first time they appear:
 
@@ -23,9 +23,9 @@ The answer comes from the system prompt in `buildChatSystemPrompt`. Nothing on t
 
 ## 2. The state snapshot
 
-Ask: "How much can I still eat today?"
+Not built yet. Add a computed snapshot on `MacroQuestStore` and pass it to `connectAgentContext`. The built-in agent adds that copy to the system prompt. Then ask: "How much can I still eat today?"
 
-The same chat now answers from the NgRx snapshot attached by `connectAgentContext`. On the mock day that is 0 kcal left and 38 g of protein left. The server does not read the store. It receives a copy on that run.
+The chat answers from that snapshot. On the mock day that is 0 kcal left and 38 g of protein left. The server does not read the service. It receives a copy on that run.
 
 Do not ask about yesterday yet. The snapshot only contains the day on screen.
 
@@ -35,7 +35,7 @@ Say: "Switch to yesterday."
 
 The day arrows move, and Yesterday's log is on screen (2207 kcal). Ask how much is left again. The numbers change because the next run brought a new snapshot, not because the server remembered the log.
 
-`showPreviousDay` exists on the store. It is not a CopilotKit tool yet, so this beat still has to be built.
+`showPreviousDay` exists on `MacroQuestStore`. It is not a CopilotKit tool yet, so this beat still has to be built.
 
 ## 4. Human in the loop
 
@@ -43,7 +43,7 @@ Ask to add a meal, already behind a confirmation. The tool that only switches th
 
 Do not show a silent add first, and do not put a second confirmation on the A2UI Apply button later.
 
-This beat is not built. The snapshot has meal totals for the active day only, so a copy such as "add the muesli from yesterday" cannot be done from the current context.
+This beat is not built. The snapshot has meal totals for the active day only, so a copy such as "add the oatmeal from yesterday" cannot be done from the current context.
 
 ## 5. A2UI, inside the chat
 

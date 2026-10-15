@@ -1,8 +1,9 @@
 # MacroQuest
 
 This branch is the talk's starting point. MacroQuest is an Angular meal log
-with a CopilotKit chat, an NgRx Signal Store, and a local Gemma 4 model server.
-The agent answers questions from a system prompt and a snapshot of the store.
+with a CopilotKit chat and a local Gemma 4 model server. The meal log lives in
+one service. The agent answers questions from a system prompt. The meal-log
+snapshot is not attached yet.
 The later beats (a frontend tool, human in the loop, A2UI, and Open Generative
 UI) are written down in `talk-script.md` and are not in this branch.
 
@@ -109,8 +110,8 @@ The runtime also defaults to these Gemma 4 settings, so the explicit env vars
 are mainly documentation and useful when switching ports.
 
 The runtime is a local Hono wrapper around `@copilotkit/runtime/v2`. Each run
-streams a chat reply. The system prompt includes the store snapshot the Angular
-app attached with `connectAgentContext`.
+streams a chat reply from the system prompt. The meal-log snapshot is not
+attached yet.
 
 ## Angular App
 
@@ -122,7 +123,7 @@ Open `http://127.0.0.1:4302`.
 
 ## Talk
 
-Load mock data, then ask the chat a question. The two starter prompts are
+The meal log loads on startup. Ask the chat a question. The two starter prompts are
 "What does this app track?" and "How much can I still eat today?" The full
 sequence is in `talk-script.md`.
 
@@ -133,13 +134,12 @@ The Angular source is split as one feature area:
 ```text
 src/app/macroquest/
   domain/       Pure nutrition types, calculations, meal factory, sample data
-  application/  NgRx Signal Store and the CopilotKit state snapshot
+  application/  Meal-log service
   ui/           Standalone Angular components with signal inputs and outputs
 ```
 
-The root `App` only mounts `<mq-shell />`. `MacroQuestStore` is composed from
-`signalStoreFeature` slices: `withMacroQuest` holds the trusted nutrition state
-and its derived signals, and `withCopilot` forwards that snapshot to the agent.
+The root `App` only mounts `<mq-shell />`. `MacroQuestStore` holds the meal
+log in one signal. The snapshot is not attached yet.
 
 ## Verification
 

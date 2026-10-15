@@ -51,6 +51,16 @@ export interface ServingChange {
   servings: number;
 }
 
+export interface FoodItemEdit {
+  mealId: string;
+  itemId: string;
+  name?: string;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
+
 export interface MacroQuestState {
   activeDate: string;
   selectedMealId: string;

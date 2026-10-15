@@ -32,7 +32,6 @@ async function openMacroQuest(page: Page) {
       name: 'Ask Gemma about a meal...',
     }),
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: '0% on track' })).toBeVisible();
 }
 
 test('MacroQuest meal log updates trusted Angular state', async ({ page, request }) => {
@@ -41,19 +40,20 @@ test('MacroQuest meal log updates trusted Angular state', async ({ page, request
 
   await openMacroQuest(page);
 
-  await page.getByRole('button', { name: "Load mock data" }).click();
+  const oatmeal = page.getByRole('article').filter({ hasText: 'Oatmeal' });
+  await expect(oatmeal).toContainText('368 kcal');
+  await expect(oatmeal).toContainText('28g protein');
+  await expect(oatmeal).toContainText('45g carbs');
+  await expect(oatmeal).toContainText('8g fat');
+  await expect(oatmeal).not.toContainText('confirmed');
 
-  const draftCard = page.getByRole('button', { name: /Meal draft Muesli/ });
-  await expect(draftCard).toBeVisible();
-  await expect(draftCard).toContainText('368 kcal · 28g protein · 45g carbs · 8g fat');
-  await expect(draftCard).toContainText('confirmed');
-
-  // The servings workbench lives in the modal behind the meal-draft card.
-  await draftCard.click();
-  await expect(page.getByRole('heading', { name: 'Muesli', exact: true })).toBeVisible();
+  await oatmeal.getByRole('button', { name: /Oatmeal/ }).click();
+  await expect(oatmeal.getByRole('heading', { name: 'Oatmeal' })).toBeVisible();
+  await expect(page.getByRole('spinbutton', { name: 'Servings' })).toHaveCount(0);
 
   // Honey is the second item. Halving it drops 15 kcal and 4 g carbs.
-  await page.getByRole('spinbutton', { name: 'Servings' }).nth(1).fill('0.5');
+  await oatmeal.getByRole('button', { name: 'Edit Honey' }).click();
+  await page.getByRole('spinbutton', { name: 'Servings' }).fill('0.5');
 
   await expect(page.getByText('353 kcal', { exact: true })).toBeVisible();
   await expect(page.getByText('28g protein', { exact: true })).toBeVisible();
@@ -61,6 +61,6 @@ test('MacroQuest meal log updates trusted Angular state', async ({ page, request
 
   await page.getByRole('button', { name: 'Confirm meal' }).click();
 
-  await expect(draftCard).toContainText('confirmed');
+  await expect(oatmeal).toContainText('353 kcal');
   expect(consoleErrors).toEqual([]);
 });

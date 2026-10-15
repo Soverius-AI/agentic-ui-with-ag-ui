@@ -25,7 +25,6 @@ export class MacroDashboard {
   readonly dayLabel = input.required<string>();
 
   readonly resetDemo = output<void>();
-  readonly loadFriendDay = output<void>();
   readonly mealSelected = output<string>();
 
   protected readonly ringBackground = computed(

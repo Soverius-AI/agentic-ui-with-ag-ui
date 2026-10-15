@@ -1,30 +1,16 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { CopilotChat } from '@copilotkit/angular';
-import { MacroQuestStore } from '../application/macroquest.store';
-import { getMealTotals } from '../domain/nutrition';
+import { MacroQuestStore } from '../application/macro-quest-store';
 import { DemoMealPlates } from './demo-meal-plates';
 import { MacroDashboard } from './macro-dashboard';
 import { MealTimeline } from './meal-timeline';
-import { MealWorkbench } from './meal-workbench';
 
 @Component({
   selector: 'mq-shell',
-  imports: [CopilotChat, DemoMealPlates, MacroDashboard, MealTimeline, MealWorkbench],
+  imports: [CopilotChat, DemoMealPlates, MacroDashboard, MealTimeline],
   templateUrl: './macroquest-shell.html',
 })
 export class MacroQuestShell {
   protected readonly chat = viewChild(CopilotChat);
-
   protected readonly store = inject(MacroQuestStore);
-  protected readonly showMealModal = signal(false);
-
-  protected readonly selectedMealTotals = computed(() => {
-    const meal = this.store.selectedMeal();
-    return meal ? getMealTotals(meal) : undefined;
-  });
-
-  protected confirmAndClose(mealId: string): void {
-    this.store.confirmMeal(mealId);
-    this.showMealModal.set(false);
-  }
 }

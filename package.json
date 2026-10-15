@@ -26,7 +26,6 @@
     "@copilotkit/angular": "^0.5.3",
     "@copilotkit/runtime": "^1.79.0",
     "@hono/node-server": "^2.1.5",
-    "@ngrx/signals": "^22.0.1",
     "dotenv": "^18.0.8",
     "hono": "^4.13.13",
     "rxjs": "~7.8.2",

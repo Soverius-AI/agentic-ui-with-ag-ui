@@ -39,9 +39,9 @@ export interface FriendDayLog {
 export function createFriendDay(): MealDraftInput[] {
   return [
     {
-      title: 'Muesli',
+      title: 'Oatmeal',
       source: friendSource,
-      notes: 'Half a bowl of muesli, with a little honey, milk, and skyr.',
+      notes: 'Half a bowl of oatmeal, with a little honey, milk, and skyr.',
       items: [
         food(
           'Ja! Natürlich rolled oats',
@@ -85,10 +85,10 @@ export function createFriendDay(): MealDraftInput[] {
       items: [food('Ehrmann high-protein vanilla pudding', '200 g cup', 152, 20, 11, 3, 0.95)],
     },
     {
-      title: 'Billa pizza',
+      title: 'Salami pizza',
       source: friendSource,
-      notes: 'Snack between lunch and dinner. Mini pizza, also from Billa.',
-      items: [food('BILLA Mini-Pizza Salami', '1 mini pizza, 120 g', 311, 12, 43, 9, 0.93)],
+      notes: 'Snack between lunch and dinner. One mini pizza.',
+      items: [food('Salami mini pizza', '1 mini pizza, 120 g', 311, 12, 43, 9, 0.93)],
     },
     {
       title: 'Kinder Maxi King',

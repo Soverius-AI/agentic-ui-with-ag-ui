@@ -10,7 +10,6 @@
           type="button"
           class="btn btn-circle btn-sm btn-ghost border border-base-300"
           aria-label="Previous day"
-          [disabled]="!canGoPreviousDay()"
           (click)="previousDay.emit()"
         >
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -32,19 +31,73 @@
     </div>
 
     @for (meal of meals(); track meal.id) {
-      <button
-        type="button"
-        class="btn h-auto min-h-14 w-full justify-between border-base-300 px-4"
-        [class.btn-primary]="meal.id === selectedMealId()"
-        [class.btn-outline]="meal.id !== selectedMealId()"
-        [attr.aria-pressed]="meal.id === selectedMealId()"
-        (click)="mealSelected.emit(meal.id)"
+      <article
+        class="overflow-hidden rounded-2xl border bg-base-100 transition"
+        [class.border-base-300]="expandedMealId() !== meal.id"
+        [class.border-primary/40]="expandedMealId() === meal.id"
+        [class.shadow-md]="expandedMealId() === meal.id"
       >
-        <span class="whitespace-normal text-left">{{ meal.title }}</span>
-        @if (mealTotals(meal); as totals) {
-          <small class="shrink-0">{{ totals.calories }} kcal - {{ totals.protein }}g protein</small>
+        <button
+          type="button"
+          class="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left hover:bg-base-200/60"
+          [attr.aria-expanded]="expandedMealId() === meal.id"
+          [attr.aria-controls]="'meal-form-' + meal.id"
+          (click)="toggleMeal(meal.id)"
+        >
+          <span class="min-w-0 flex-1">
+            <span class="block text-lg font-bold tracking-tight">{{ meal.title }}</span>
+            @if (mealTotals(meal); as totals) {
+              <span class="mt-1 block truncate">
+                <span class="text-base font-black">{{ totals.calories }} kcal</span>
+                <span class="text-sm font-normal text-base-content/60">
+                  · {{ totals.protein }}g protein · {{ totals.carbs }}g carbs · {{ totals.fat }}g fat
+                </span>
+              </span>
+            }
+          </span>
+          <span
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-base-300 text-base-content/70 transition"
+            [class.border-primary/40]="expandedMealId() === meal.id"
+            [class.bg-primary/10]="expandedMealId() === meal.id"
+            [class.text-primary]="expandedMealId() === meal.id"
+            aria-hidden="true"
+          >
+            <svg
+              class="h-4 w-4 transition"
+              [class.rotate-180]="expandedMealId() === meal.id"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </span>
+        </button>
+
+        @if (expandedMealId() === meal.id) {
+          <div [id]="'meal-form-' + meal.id" class="border-t border-primary/15 bg-base-200/40">
+            <mq-meal-workbench
+              [meal]="meal"
+              [totals]="mealTotals(meal)"
+              (servingsChanged)="servingsChanged.emit($event)"
+              (titleChanged)="titleChanged.emit($event)"
+              (itemEdited)="itemEdited.emit($event)"
+            />
+            <div class="flex justify-end border-t border-base-300 px-6 py-4">
+              <button
+                type="button"
+                class="btn btn-primary rounded-full"
+                (click)="mealConfirmed.emit(meal.id)"
+              >
+                Confirm meal
+              </button>
+            </div>
+          </div>
         }
-      </button>
+      </article>
     } @empty {
       <p class="text-base-content/60">No meals logged for this quest yet.</p>
     }

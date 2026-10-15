@@ -1,8 +1,8 @@
 /**
  * MacroQuest runtime entrypoint: CopilotRuntime + Hono HTTP server.
  *
- * This branch serves the chat agent only. Config, the agent, and the model
- * client live in the sibling modules.
+ * This branch serves one built-in chat agent. Config and the agent live in
+ * the sibling modules.
  */
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
@@ -40,7 +40,7 @@ app.get('/health', (c) =>
     ok: true,
     runtime: 'macroquest',
     provider: modelProvider,
-    agent: 'macroquest-custom',
+    agent: 'builtin',
     modelBaseUrl,
     modelName,
   }),
@@ -66,6 +66,6 @@ server.on('error', (error: NodeJS.ErrnoException) => {
 });
 
 console.log(`MacroQuest runtime listening at http://127.0.0.1:${port}/api/copilotkit`);
-console.log(`Model provider: ${modelProvider} (custom MacroQuest chat agent)`);
+console.log(`Model provider: ${modelProvider}`);
 console.log(`Model endpoint: ${modelBaseUrl}`);
 console.log(`Model name: ${modelName}`);

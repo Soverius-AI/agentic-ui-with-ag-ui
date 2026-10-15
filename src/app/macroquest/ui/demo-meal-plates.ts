@@ -161,7 +161,7 @@ export class DemoMealPlates {
 
       const blob = await response.blob();
       const mimeType = blob.type || 'image/jpeg';
-      const value = await this.#blobToBase64(blob);
+      const value = await this.blobToBase64(blob);
       const attachment: Attachment = {
         id: crypto.randomUUID(),
         type: 'image',
@@ -193,7 +193,7 @@ export class DemoMealPlates {
     }
   }
 
-  async #blobToBase64(blob: Blob): Promise<string> {
+  private async blobToBase64(blob: Blob): Promise<string> {
     const dataUrl = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
