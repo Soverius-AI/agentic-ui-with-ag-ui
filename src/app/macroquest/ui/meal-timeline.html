@@ -1,25 +1,52 @@
 <section class="card mq-card">
   <div class="card-body gap-3 p-6">
-    <div>
-      <p class="text-xs font-bold uppercase tracking-wide text-base-content/60">Today</p>
-      <h2 class="text-2xl font-black">Meal log</h2>
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wide text-base-content/60">{{ dayLabel() }}</p>
+        <h2 class="text-2xl font-black">Meal log</h2>
+      </div>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          class="btn btn-circle btn-sm btn-ghost border border-base-300"
+          aria-label="Previous day"
+          [disabled]="!canGoPreviousDay()"
+          (click)="previousDay.emit()"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="btn btn-circle btn-sm btn-ghost border border-base-300"
+          aria-label="Next day"
+          [disabled]="!canGoNextDay()"
+          (click)="nextDay.emit()"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </button>
+      </div>
     </div>
 
-  @for (meal of meals(); track meal.id) {
-    <button
-      type="button"
-      class="btn h-auto min-h-14 w-full justify-between border-base-300 px-4"
-      [class.btn-primary]="meal.id === selectedMealId()"
-      [class.btn-outline]="meal.id !== selectedMealId()"
-      (click)="mealSelected.emit(meal.id)"
-    >
-      <span>{{ meal.title }}</span>
-      @if (mealTotals(meal); as totals) {
-        <small>{{ totals.calories }} kcal - {{ totals.protein }}g protein</small>
-      }
-    </button>
-  } @empty {
-    <p class="text-base-content/60">No meals logged for this quest yet.</p>
-  }
+    @for (meal of meals(); track meal.id) {
+      <button
+        type="button"
+        class="btn h-auto min-h-14 w-full justify-between border-base-300 px-4"
+        [class.btn-primary]="meal.id === selectedMealId()"
+        [class.btn-outline]="meal.id !== selectedMealId()"
+        [attr.aria-pressed]="meal.id === selectedMealId()"
+        (click)="mealSelected.emit(meal.id)"
+      >
+        <span class="whitespace-normal text-left">{{ meal.title }}</span>
+        @if (mealTotals(meal); as totals) {
+          <small class="shrink-0">{{ totals.calories }} kcal - {{ totals.protein }}g protein</small>
+        }
+      </button>
+    } @empty {
+      <p class="text-base-content/60">No meals logged for this quest yet.</p>
+    }
   </div>
 </section>

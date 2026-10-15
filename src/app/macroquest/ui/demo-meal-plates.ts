@@ -16,12 +16,37 @@ const MEAL_PHOTO_PROMPT = 'What am I eating?';
   selector: 'mq-demo-meal-plates',
   imports: [NgOptimizedImage],
   template: `
-    <div class="border-b border-base-300/70 bg-base-100 px-5 py-3" aria-label="Demo meal plates">
-      <div class="flex items-baseline justify-between gap-3">
-        <p class="text-xs font-bold uppercase tracking-wide text-base-content/55">Demo plates</p>
-        <p class="text-xs text-base-content/45">Click to attach and fill a starter prompt</p>
-      </div>
-      <div class="mt-2 flex gap-2 overflow-x-auto pb-1">
+    <div class="border-b border-base-300/70 bg-base-100 px-5 py-3">
+      <button
+        type="button"
+        class="flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        [attr.aria-expanded]="expanded()"
+        aria-controls="demo-plates-panel"
+        (click)="toggle()"
+      >
+        <span class="text-xs font-bold uppercase tracking-wide text-base-content/55">
+          Demo plates
+        </span>
+        <svg
+          class="h-4 w-4 shrink-0 text-base-content/45 transition-transform"
+          [class.rotate-180]="expanded()"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      @if (expanded()) {
+        <div id="demo-plates-panel">
+          <p class="mt-2 text-xs text-base-content/45">
+            Click to attach and fill a starter prompt
+          </p>
+          <div class="mt-2 flex gap-2 overflow-x-auto pb-1">
         @for (plate of plates; track plate.id) {
           <button
             type="button"
@@ -43,7 +68,6 @@ const MEAL_PHOTO_PROMPT = 'What am I eating?';
                 [alt]="plate.label"
                 fill
                 sizes="10vw"
-                priority
                 class="object-cover"
               />
               @if (attachingPlateId() === plate.id) {
@@ -61,9 +85,11 @@ const MEAL_PHOTO_PROMPT = 'What am I eating?';
             </span>
           </button>
         }
-      </div>
-      @if (attachError(); as error) {
-        <p class="mt-2 text-xs text-error" role="alert">{{ error }}</p>
+          </div>
+          @if (attachError(); as error) {
+            <p class="mt-2 text-xs text-error" role="alert">{{ error }}</p>
+          }
+        </div>
       }
     </div>
   `,
@@ -71,9 +97,14 @@ const MEAL_PHOTO_PROMPT = 'What am I eating?';
 export class DemoMealPlates {
   readonly chat = input<CopilotChat | undefined>();
 
+  protected readonly expanded = signal(false);
   protected readonly attachingPlateId = signal<string | null>(null);
   protected readonly selectedPlateId = signal<string | null>(null);
   protected readonly attachError = signal<string | null>(null);
+
+  protected toggle(): void {
+    this.expanded.update((open) => !open);
+  }
 
   /** Highlight the plate while it attaches and keep it lit once selected. */
   protected isHighlighted(id: string): boolean {
@@ -83,31 +114,31 @@ export class DemoMealPlates {
   protected readonly plates: readonly DemoPlate[] = [
     {
       id: 'schnitzel',
-      label: 'Schnitzel',
+      label: 'Breaded cutlet',
       src: '/meals/schnitzel.jpg',
       filename: 'schnitzel.jpg',
     },
     {
       id: 'wuerstel',
-      label: 'Würstel',
+      label: 'Sausages',
       src: '/meals/wuerstel.jpg',
       filename: 'wuerstel.jpg',
     },
     {
       id: 'kaiserschmarrn',
-      label: 'Kaiserschmarrn',
+      label: 'Shredded pancake',
       src: '/meals/kaiserschmarrn.jpg',
       filename: 'kaiserschmarrn.jpg',
     },
     {
       id: 'tafelspitz',
-      label: 'Tafelspitz',
+      label: 'Boiled beef',
       src: '/meals/tafelspitz.jpg',
       filename: 'tafelspitz.jpg',
     },
     {
       id: 'sacher',
-      label: 'Sacher torte',
+      label: 'Sacher cake',
       src: '/meals/sacher%20torte.jpg',
       filename: 'sacher torte.jpg',
     },

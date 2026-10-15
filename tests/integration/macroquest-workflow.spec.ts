@@ -125,28 +125,29 @@ const macroChartReady = (frame: Frame) =>
     );
   });
 
-test('MacroQuest sample meal workflow updates trusted Angular state', async ({ page, request }) => {
+test('MacroQuest meal log updates trusted Angular state', async ({ page, request }) => {
   await expectRuntimeReady(request);
   const consoleErrors = collectConsoleErrors(page);
 
   await openMacroQuest(page);
 
-  await page.getByRole('button', { name: 'Analyze sample bowl' }).click();
+  await page.getByRole('button', { name: "Load mock data" }).click();
 
-  const draftCard = page.getByRole('button', { name: /Meal draft Chicken avocado power bowl/ });
+  const draftCard = page.getByRole('button', { name: /Meal draft Muesli/ });
   await expect(draftCard).toBeVisible();
-  await expect(draftCard).toContainText('554 kcal · 45g protein · 55g carbs · 17g fat');
-  await expect(draftCard).toContainText('draft');
+  await expect(draftCard).toContainText('368 kcal · 28g protein · 45g carbs · 8g fat');
+  await expect(draftCard).toContainText('confirmed');
 
   // The servings workbench lives in the modal behind the meal-draft card.
   await draftCard.click();
-  await expect(page.getByRole('heading', { name: 'Chicken avocado power bowl' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Muesli', exact: true })).toBeVisible();
 
+  // Honey is the second item. Halving it drops 15 kcal and 4 g carbs.
   await page.getByRole('spinbutton', { name: 'Servings' }).nth(1).fill('0.5');
 
-  await expect(page.getByText('446 kcal', { exact: true })).toBeVisible();
-  await expect(page.getByText('43g protein', { exact: true })).toBeVisible();
-  await expect(page.getByText('33g carbs', { exact: true })).toBeVisible();
+  await expect(page.getByText('353 kcal', { exact: true })).toBeVisible();
+  await expect(page.getByText('28g protein', { exact: true })).toBeVisible();
+  await expect(page.getByText('41g carbs', { exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Confirm meal' }).click();
 
@@ -160,9 +161,9 @@ test('CopilotKit generated sandbox UI can update the Signal Store', async ({ pag
   const consoleErrors = collectConsoleErrors(page);
 
   await openMacroQuest(page);
-  await page.getByRole('button', { name: 'Analyze sample bowl' }).click();
-  const draftCard = page.getByRole('button', { name: /Meal draft Chicken avocado power bowl/ });
-  await expect(draftCard).toContainText('554 kcal');
+  await page.getByRole('button', { name: "Load mock data" }).click();
+  const draftCard = page.getByRole('button', { name: /Meal draft Muesli/ });
+  await expect(draftCard).toContainText('368 kcal');
 
   const sandboxesBefore = await page.locator(FINAL_SANDBOX).count();
   await askCopilot(page, 'Can you make this meal lighter?');
@@ -174,12 +175,12 @@ test('CopilotKit generated sandbox UI can update the Signal Store', async ({ pag
     ignoreCase: true,
   });
   await expect(sandbox.getByTestId('apply-lighter-swap')).toBeVisible();
-  await expect(sandbox.locator('body')).toContainText('554');
+  await expect(sandbox.locator('body')).toContainText('368');
   await expect(sandbox.locator('body')).not.toContainText('--');
 
-  await expect(sandbox.locator('#targetCalories')).toHaveText('554');
+  await expect(sandbox.locator('#targetCalories')).toHaveText('368');
   await sandbox.locator('#calorieMultiplier').fill('0.7');
-  await expect(sandbox.locator('#targetCalories')).toHaveText('388');
+  await expect(sandbox.locator('#targetCalories')).toHaveText('258');
 
   // Reproduce a restored-chat edge case: the generated iframe still exists,
   // but the host no longer has a selected or latest meal. The model embeds the
@@ -207,10 +208,8 @@ test('CopilotKit macro chart renders a model-authored SVG dashboard', async ({ p
   const consoleErrors = collectConsoleErrors(page);
 
   await openMacroQuest(page);
-  await page.getByRole('button', { name: 'Analyze sample bowl' }).click();
-  await expect(
-    page.getByRole('button', { name: /Meal draft Chicken avocado power bowl/ }),
-  ).toBeVisible();
+  await page.getByRole('button', { name: "Load mock data" }).click();
+  await expect(page.getByRole('button', { name: /Meal draft Muesli/ })).toBeVisible();
 
   const sandboxesBefore = await page.locator(FINAL_SANDBOX).count();
   await askCopilot(page, 'Show me a chart of my macros vs my goals');
@@ -220,7 +219,7 @@ test('CopilotKit macro chart renders a model-authored SVG dashboard', async ({ p
   await expect(chart.getByTestId('macro-chart')).toBeVisible();
   await expect(chart.getByTestId('macro-kpis')).toBeVisible();
   await expect(chart.locator('svg')).toHaveCount(2);
-  await expect(chart.locator('body')).toContainText('554');
+  await expect(chart.locator('body')).toContainText('2523');
   await expect(chart.locator('body')).not.toContainText('--');
 
   const absoluteToggle = chart.getByTestId('chart-toggle-absolute');

@@ -173,18 +173,6 @@
     transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* ---- Gradient primary button ---- */
-  .mq-btn-primary {
-    @apply border-0 text-white;
-    background-image: linear-gradient(135deg, #047857, #0d9488);
-    box-shadow: 0 12px 24px -12px rgba(13, 148, 136, 0.8);
-  }
-
-  .mq-btn-primary:hover {
-    background-image: linear-gradient(135deg, #059669, #0e9488);
-    box-shadow: 0 16px 30px -12px rgba(13, 148, 136, 0.9);
-  }
-
   .macro-shell .copilot-panel .copilotKitChat {
     background: transparent;
   }

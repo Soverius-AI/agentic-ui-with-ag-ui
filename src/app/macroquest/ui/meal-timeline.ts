@@ -9,8 +9,13 @@ import { getMealTotals } from '../domain/nutrition';
 export class MealTimeline {
   readonly meals = input.required<MealEntry[]>();
   readonly selectedMealId = input.required<string>();
+  readonly dayLabel = input.required<string>();
+  readonly canGoPreviousDay = input.required<boolean>();
+  readonly canGoNextDay = input.required<boolean>();
 
   readonly mealSelected = output<string>();
+  readonly previousDay = output<void>();
+  readonly nextDay = output<void>();
 
   protected mealTotals(meal: MealEntry) {
     return getMealTotals(meal);
