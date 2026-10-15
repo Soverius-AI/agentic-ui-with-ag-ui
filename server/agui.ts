@@ -4,6 +4,7 @@
  * calls and no business logic live here.
  */
 import { randomUUID } from 'node:crypto';
+import { EventType } from '@ag-ui/core';
 import type {
   AssistantMessage,
   Context,
@@ -130,7 +131,7 @@ export function getApplyMealDraftAction(forwardedProps: unknown) {
 
 export function textChunk(messageId: string, delta: string): TextMessageChunkEvent {
   return {
-    type: 'TEXT_MESSAGE_CHUNK',
+    type: EventType.TEXT_MESSAGE_CHUNK,
     role: 'assistant',
     messageId,
     delta,
@@ -144,18 +145,18 @@ export function* toolCallEvents(
 ): Generator<ToolCallStartEvent | ToolCallArgsEvent | ToolCallEndEvent> {
   const toolCallId = randomUUID();
   const startEvent: ToolCallStartEvent = {
-    type: 'TOOL_CALL_START',
+    type: EventType.TOOL_CALL_START,
     parentMessageId,
     toolCallId,
     toolCallName,
   };
   const argsEvent: ToolCallArgsEvent = {
-    type: 'TOOL_CALL_ARGS',
+    type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: JSON.stringify(args),
   };
   const endEvent: ToolCallEndEvent = {
-    type: 'TOOL_CALL_END',
+    type: EventType.TOOL_CALL_END,
     toolCallId,
   };
 

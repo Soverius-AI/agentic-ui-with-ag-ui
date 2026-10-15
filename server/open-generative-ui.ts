@@ -7,6 +7,7 @@
  * progressive sandbox activity. No HTML, CSS, or widget fallback lives here.
  */
 import { randomUUID } from 'node:crypto';
+import { EventType } from '@ag-ui/core';
 import type {
   Context,
   Message,
@@ -56,13 +57,13 @@ export async function* streamOpenGenerativeUIToolEvents(
 
   const toolCallId = randomUUID();
   const startEvent: ToolCallStartEvent = {
-    type: 'TOOL_CALL_START',
+    type: EventType.TOOL_CALL_START,
     parentMessageId,
     toolCallId,
     toolCallName: generateSandboxedUiToolName,
   };
   const firstArgsEvent: ToolCallArgsEvent = {
-    type: 'TOOL_CALL_ARGS',
+    type: EventType.TOOL_CALL_ARGS,
     toolCallId,
     delta: first.value,
   };
@@ -76,7 +77,7 @@ export async function* streamOpenGenerativeUIToolEvents(
     if (!next.value) continue;
     generatedCharacters += next.value.length;
     const argsEvent: ToolCallArgsEvent = {
-      type: 'TOOL_CALL_ARGS',
+      type: EventType.TOOL_CALL_ARGS,
       toolCallId,
       delta: next.value,
     };
@@ -84,7 +85,7 @@ export async function* streamOpenGenerativeUIToolEvents(
   }
 
   const endEvent: ToolCallEndEvent = {
-    type: 'TOOL_CALL_END',
+    type: EventType.TOOL_CALL_END,
     toolCallId,
   };
   yield endEvent;

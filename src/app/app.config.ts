@@ -1,5 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideCopilotChatLabels, provideCopilotKit } from '@copilotkit/angular';
+import { basicCatalog } from '@copilotkit/angular/a2ui';
 import {
   applyMacroSwapFromSandbox,
   macroSwapSandboxSchema,
@@ -14,8 +15,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideCopilotKit({
       runtimeUrl: 'http://127.0.0.1:3210/api/copilotkit',
-      licenseKey: 'ck_pub_00000000000000000000000000000000',
       a2ui: {
+        catalog: basicCatalog,
         includeSchema: true,
       },
       // Static starter prompts only. These render purely client-side (no model
