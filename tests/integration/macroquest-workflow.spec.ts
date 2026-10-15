@@ -27,11 +27,7 @@ async function openMacroQuest(page: Page) {
   await page.goto('/');
 
   await expect(page.getByRole('heading', { name: 'MacroQuest' })).toBeVisible();
-  await expect(
-    page.getByRole('textbox', {
-      name: 'Ask Gemma about a meal...',
-    }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Meal log' })).toBeVisible();
 }
 
 test('MacroQuest meal log updates trusted Angular state', async ({ page, request }) => {

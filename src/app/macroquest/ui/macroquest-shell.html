@@ -1,45 +1,47 @@
-<main
-  class="macro-shell min-h-dvh bg-base-200 text-base-content xl:grid xl:h-dvh xl:grid-cols-[minmax(0,1fr)_minmax(380px,30rem)] xl:gap-6 xl:overflow-hidden xl:p-6"
->
-  <section
-    class="flex min-w-0 flex-col gap-8 p-4 sm:p-6 xl:min-h-0 xl:overflow-y-auto xl:p-0"
-    aria-label="MacroQuest dashboard"
+<main class="macro-shell min-h-dvh bg-base-200 text-base-content">
+  <div
+    class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-8 sm:px-8 sm:py-10 xl:h-dvh xl:w-max xl:max-w-full xl:flex-row xl:items-stretch xl:overflow-hidden"
   >
-    <mq-dashboard
-      [goals]="store.goals()"
-      [totals]="store.dailyTotals()"
-      [remaining]="store.remaining()"
-      [questProgress]="store.questProgress()"
-      [macroScore]="store.macroScore()"
-      [meals]="store.activeMeals()"
-      [selectedMealId]="store.selectedMealId()"
-      [dayLabel]="store.dayLabel()"
-      (resetDemo)="store.resetDemo()"
-      (mealSelected)="store.selectMeal($event)"
-    />
+    <section
+      class="flex w-full min-w-0 max-w-6xl flex-col gap-8 xl:w-[72rem] xl:shrink xl:overflow-y-auto"
+      aria-label="MacroQuest dashboard"
+    >
+      <mq-dashboard
+        [goals]="store.goals()"
+        [totals]="store.dailyTotals()"
+        [remaining]="store.remaining()"
+        [questProgress]="store.questProgress()"
+        [macroScore]="store.macroScore()"
+        [meals]="store.activeMeals()"
+        [selectedMealId]="store.selectedMealId()"
+        [dayLabel]="store.dayLabel()"
+        (resetDemo)="store.resetDemo()"
+        (mealSelected)="store.selectMeal($event)"
+      />
 
-    <mq-meal-timeline
-      [meals]="store.activeMeals()"
-      [dayLabel]="store.dayLabel()"
-      [canGoNextDay]="store.canGoNextDay()"
-      (mealSelected)="store.selectMeal($event)"
-      (servingsChanged)="store.updateServings($event)"
-      (titleChanged)="store.renameMeal($event.mealId, $event.title)"
-      (itemEdited)="store.updateFoodItem($event)"
-      (mealConfirmed)="store.confirmMeal($event)"
-      (previousDay)="store.showPreviousDay()"
-      (nextDay)="store.showNextDay()"
-    />
-  </section>
+      <mq-meal-timeline
+        [meals]="store.activeMeals()"
+        [dayLabel]="store.dayLabel()"
+        [canGoNextDay]="store.canGoNextDay()"
+        (mealSelected)="store.selectMeal($event)"
+        (servingsChanged)="store.updateServings($event)"
+        (titleChanged)="store.renameMeal($event.mealId, $event.title)"
+        (itemEdited)="store.updateFoodItem($event)"
+        (mealConfirmed)="store.confirmMeal($event)"
+        (previousDay)="store.showPreviousDay()"
+        (nextDay)="store.showNextDay()"
+      />
+    </section>
 
-  <aside
-    class="copilot-panel m-4 flex min-h-150 flex-col overflow-hidden rounded-2xl border border-base-300/70 bg-base-100 shadow-xl sm:m-6 xl:m-0 xl:min-h-0"
-    aria-label="MacroQuest copilot"
-  >
-    <mq-demo-meal-plates [chat]="chat()" />
+    <!-- <aside
+      class="copilot-panel flex min-h-150 w-full shrink-0 flex-col overflow-hidden rounded-2xl border border-base-300/70 bg-base-100 shadow-xl xl:h-full xl:w-[30rem]"
+      aria-label="MacroQuest copilot"
+    >
+      <mq-demo-meal-plates [chat]="chat()" />
 
-    <div class="min-h-0 flex-1 bg-base-100 p-3">
-      <copilot-chat [attachments]="store.mealPhotoAttachments" />
-    </div>
-  </aside>
+      <div class="min-h-0 flex-1 bg-base-100 p-3">
+        <copilot-chat [attachments]="store.mealPhotoAttachments" />
+      </div>
+    </aside> -->
+  </div>
 </main>
