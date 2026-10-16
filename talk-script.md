@@ -39,17 +39,21 @@ The day arrows move, and Yesterday's log is on screen (2207 kcal). Ask how much 
 
 ## 4. Human in the loop
 
-Ask to add a meal, already behind a confirmation. The tool that only switches the day runs immediately. The tool that writes the log waits.
+Attach a meal photo. A text description such as "grilled chicken bowl with rice and beans" is the same beat.
 
-Do not show a silent add first, and do not put a second confirmation on the A2UI Apply button later.
+The model reads the photo and calls one frontend tool, `applyMealDraft`, with the title and each food: name, serving label, servings, calories, protein, carbs, fat, and confidence. Those numbers are per serving. Register that tool with `registerHumanInTheLoop`. The chat shows the estimate and waits. Confirm calls `store.applyMealDraft` and adds the meal to the day on screen. Cancel writes nothing.
 
-This beat is not built. The snapshot has meal totals for the active day only, so a copy such as "add the oatmeal from yesterday" cannot be done from the current context.
+The day tools from beat 3 stay `registerFrontendTool` and run immediately. Only this write pauses.
+
+The prompt in `server/agent.ts` tells the model to call `applyMealDraft` for a photo or a request to log a meal. The tool schema is the list of fields. There is no second model call on the server.
+
+This beat is not built. The handler must stamp the meal with the day on screen. `createMeal` currently timestamps it now, which jumps the log to today.
 
 ## 5. A2UI, inside the chat
 
-Say: "Analyze a grilled chicken bowl with rice and beans."
+The meal is already estimated and, after confirmation, already logged. This beat only draws a card.
 
-A card appears in the chat. Click Apply. The dashboard updates. Say that the model drew the card from the catalog, and the button writes back through a tool. This beat is not on the `init` branch.
+A card appears in the chat. Say that the model filled the catalog the app already renders. The card does not estimate the meal again, and its button is not a second confirmation. This beat is not on the `init` branch.
 
 ## 6. Closer, if there is a minute: Open Generative UI
 
