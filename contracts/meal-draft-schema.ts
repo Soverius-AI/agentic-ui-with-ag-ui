@@ -18,3 +18,5 @@ export const mealDraftSchema = z.object({
     )
     .min(1),
 });
+
+export type MealDraft = z.infer<typeof mealDraftSchema>;

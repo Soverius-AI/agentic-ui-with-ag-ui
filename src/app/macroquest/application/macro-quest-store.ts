@@ -2,17 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Service, computed, inject, signal } from '@angular/core';
 import { type AttachmentsConfig } from '@copilotkit/angular';
 import { take } from 'rxjs';
-import { mealLogUrl } from './mock-meals.interceptor';
+import { MealDraft } from '../../../../contracts/meal-draft-schema';
 import { FriendDayLog } from '../domain/friend-day';
-import { createMeal } from '../domain/meal.factory';
 import {
+  FoodItemEdit,
   MacroGoals,
   MacroQuestState,
-  FoodItemEdit,
-  MealDraftInput,
   MealEntry,
   ServingChange,
 } from '../domain/macroquest.models';
+import { createMeal } from '../domain/meal.factory';
 import {
   clamp,
   getDailyTotals,
@@ -27,6 +26,7 @@ import {
   questDate,
   shiftQuestDate,
 } from '../domain/quest-day';
+import { mealLogUrl } from './mock-meals.interceptor';
 
 const initialState: MacroQuestState = {
   activeDate: new Date().toISOString().slice(0, 10),
@@ -92,7 +92,7 @@ export class MacroQuestStore {
     this.showDay(next);
   }
 
-  applyMealDraft(input: MealDraftInput): MealEntry {
+  applyMealDraft(input: MealDraft): MealEntry {
     const meal = createMeal(input);
     this.patchState({
       meals: [meal, ...this.meals()],
@@ -183,7 +183,7 @@ export class MacroQuestStore {
     const today = questDate();
     const meals = days.flatMap((day) =>
       day.meals.map((draft) => ({
-        ...createMeal(draft),
+        ...createMeal({ ...draft, notes: '' }),
         status: 'confirmed' as const,
         capturedAt: capturedAtForDayOffset(day.dayOffset),
       })),
