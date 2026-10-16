@@ -1,8 +1,8 @@
 # MacroQuest talk script
 
-The `init` branch contains beat 1. Beats 2 through 6 are not in this branch.
+The `init` branch contains beat 1. Beats 2 through 7 are not in this branch.
 
-Five beats, then one optional closer. Each beat adds one idea. The meal log is already loaded. Stay on Today before you start.
+Six beats, then one optional closer. Each beat adds one idea. The meal log is already loaded. Stay on Today before you start.
 
 Say the names out loud the first time they appear:
 
@@ -37,25 +37,35 @@ The day arrows move, and Yesterday's log is on screen (2207 kcal). Ask how much 
 
 `showPreviousDay` exists on `MacroQuestStore`. It is not a CopilotKit tool yet, so this beat still has to be built.
 
-## 4. Human in the loop
+## 4. An activity message
 
-Attach a meal photo. A text description such as "grilled chicken bowl with rice and beans" is the same beat.
+Attach a meal photo.
 
-The model reads the photo and calls one frontend tool, `applyMealDraft`, with the title and each food: name, serving label, servings, calories, protein, carbs, fat, and confidence. Those numbers are per serving. Register that tool with `registerHumanInTheLoop`. The chat shows the estimate and waits. Confirm calls `store.applyMealDraft` and adds the meal to the day on screen. Cancel writes nothing.
+Before the photo is sent, the chat shows an activity message: "Looking at the photo." The server tool `analyze_meal` then sends the photo. When the meal draft comes back, that same activity updates: "Estimate ready," and the title. The meal log does not change.
+
+The draft is `mealDraftSchema`: title, notes, and foods, with per-serving calories, protein, carbs, and fat. It is not a meal yet. There is no id, no time, and no status. `registerRenderActivityMessage` draws the activity in the chat. The handler emits it before the photo request and again when the draft is parsed.
+
+This beat is not built. It comes before the meal is saved.
+
+## 5. Human in the loop
+
+The estimate is already in the chat. Ask to add the meal.
+
+The model calls one frontend tool, `applyMealDraft`, with that draft. Register that tool with `registerHumanInTheLoop`. The chat shows the estimate and waits. Confirm calls `store.applyMealDraft`. `createMeal` adds the id, the current time, and the status, and the meal appears on the day on screen. Cancel writes nothing.
 
 The day tools from beat 3 stay `registerFrontendTool` and run immediately. Only this write pauses.
 
-The prompt in `server/agent.ts` tells the model to call `applyMealDraft` for a photo or a request to log a meal. The tool schema is the list of fields. There is no second model call on the server.
+The prompt in `server/agent.ts` tells the model to call `applyMealDraft` to save. The tool parameters are `mealDraftSchema`.
 
-This beat is not built. The handler must stamp the meal with the day on screen. `createMeal` currently timestamps it now, which jumps the log to today.
+This beat is not built.
 
-## 5. A2UI, inside the chat
+## 6. A2UI, inside the chat
 
 The meal is already estimated and, after confirmation, already logged. This beat only draws a card.
 
 A card appears in the chat. Say that the model filled the catalog the app already renders. The card does not estimate the meal again, and its button is not a second confirmation. This beat is not on the `init` branch.
 
-## 6. Closer, if there is a minute: Open Generative UI
+## 7. Closer, if there is a minute: Open Generative UI
 
 Name the sandbox before you click. Then ask for the macro chart.
 
