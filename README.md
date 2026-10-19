@@ -27,4 +27,4 @@ Run `pnpm run start:all:openrouter`.
 
 Alternatively, use local inference with llama.cpp. Install llama.cpp, set `COPILOT_MODEL_PROVIDER=local` in `.env`, and run `pnpm run start:all`. The local server script downloads the Gemma 4 model on first use.
 
-Open the application at http://127.0.0.1:4302.
+Open the application at http://localhost:4200.
