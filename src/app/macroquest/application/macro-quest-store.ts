@@ -1,6 +1,7 @@
+import z from 'zod';
 import { HttpClient } from '@angular/common/http';
 import { Service, computed, inject, signal } from '@angular/core';
-import { connectAgentContext, type AttachmentsConfig } from '@copilotkit/angular';
+import { connectAgentContext, registerFrontendTool, type AttachmentsConfig } from '@copilotkit/angular';
 import { take } from 'rxjs';
 import { MealDraft } from '../../../../contracts/meal-draft-schema';
 import { FriendDayLog } from '../domain/friend-day';
@@ -80,6 +81,20 @@ export class MacroQuestStore {
       description: 'This contains the meals, the goals, the selected meal, and the active date.',
       value: JSON.stringify(this.state()),
     }));
+
+    registerFrontendTool({
+      name: 'show_previous_day',
+      description: 'Switch to the previous day',
+      parameters: z.object({}),
+      handler: async () => this.showPreviousDay(),
+    });
+
+    registerFrontendTool({
+      name: 'show_next_day',
+      description: 'Switch to the next day',
+      parameters: z.object({}),
+      handler: async () => this.showNextDay(),
+    });
 
     this.http
       .get<FriendDayLog[]>(mealLogUrl)

@@ -1,6 +1,6 @@
-# Article chapter 2: Agent Context
+# Article chapter 3: Frontend Tool Calling
 
-This branch is cumulative: it contains chapters 1–2.
+This branch is cumulative: it contains chapters 1–3.
 
 Prepared helpers for later chapters may be present but are not registered yet.
 
