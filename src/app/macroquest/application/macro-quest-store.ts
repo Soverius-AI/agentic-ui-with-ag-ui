@@ -1,8 +1,9 @@
+import { MealAnalysisActivity, mealAnalysisActivityContent, mealAnalysisActivityType } from '../ui/meal-analysis-activity';
 import { MealDraftConfirmation } from '../ui/meal-draft-confirmation';
 import z from 'zod';
 import { HttpClient } from '@angular/common/http';
 import { Service, computed, inject, signal } from '@angular/core';
-import { connectAgentContext, registerFrontendTool, registerHumanInTheLoop, type AttachmentsConfig } from '@copilotkit/angular';
+import { connectAgentContext, registerFrontendTool, registerHumanInTheLoop, registerRenderActivityMessage, type AttachmentsConfig } from '@copilotkit/angular';
 import { take } from 'rxjs';
 import { MealDraft, mealDraftSchema } from '../../../../contracts/meal-draft-schema';
 import { FriendDayLog } from '../domain/friend-day';
@@ -102,6 +103,12 @@ export class MacroQuestStore {
       description: 'Add the meal to the meal log.',
       parameters: mealDraftSchema,
       component: MealDraftConfirmation,
+    });
+
+    registerRenderActivityMessage({
+      activityType: mealAnalysisActivityType,
+      content: mealAnalysisActivityContent,
+      component: MealAnalysisActivity,
     });
 
     this.http

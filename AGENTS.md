@@ -27,4 +27,4 @@ requires live-model validation.
 
 ## Article chapter override
 
-This branch is the cumulative article chapter 5, `human-in-the-loop`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.
+This branch is the cumulative article chapter 6, `activity-messages`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.

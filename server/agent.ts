@@ -6,6 +6,7 @@ import { BuiltInAgent, defineTool } from '@copilotkit/runtime/v2';
 import { modelApiKey } from './config';
 import z from 'zod';
 import { analyzeMealToolHandler, ToolExecutionOptions } from './prepared/analyze-meal-handler';
+import { forwardMealAnalysis } from './meal-analysis-activity';
 
 export const agent = new BuiltInAgent({
   model: `openai/google/gemma-4-26b-a4b-it`,
@@ -24,3 +25,5 @@ export const agent = new BuiltInAgent({
     }),
   ],
 });
+
+agent.use((_input, next) => forwardMealAnalysis(next.run(_input)));
