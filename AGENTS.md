@@ -27,4 +27,4 @@ requires live-model validation.
 
 ## Article chapter override
 
-This branch is the cumulative article chapter 1, `basic-chat`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.
+This branch is the cumulative article chapter 2, `agent-context`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.

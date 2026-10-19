@@ -1,6 +1,6 @@
-# Article chapter 1: Basic Chat
+# Article chapter 2: Agent Context
 
-This branch is cumulative: it contains chapters 1–1.
+This branch is cumulative: it contains chapters 1–2.
 
 Prepared helpers for later chapters may be present but are not registered yet.
 

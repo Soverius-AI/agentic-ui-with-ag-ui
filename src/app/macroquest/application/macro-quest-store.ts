@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Service, computed, inject, signal } from '@angular/core';
-import { type AttachmentsConfig } from '@copilotkit/angular';
+import { connectAgentContext, type AttachmentsConfig } from '@copilotkit/angular';
 import { take } from 'rxjs';
 import { MealDraft } from '../../../../contracts/meal-draft-schema';
 import { FriendDayLog } from '../domain/friend-day';
@@ -76,6 +76,10 @@ export class MacroQuestStore {
   } satisfies AttachmentsConfig;
 
   constructor() {
+    connectAgentContext(() => ({
+      description: 'This contains the meals, the goals, the selected meal, and the active date.',
+      value: JSON.stringify(this.state()),
+    }));
 
     this.http
       .get<FriendDayLog[]>(mealLogUrl)
