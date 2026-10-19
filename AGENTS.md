@@ -24,3 +24,7 @@ explicitly requires it.
 Before finishing, run `pnpm build`. Run focused tests relevant to the change
 when available. Do not start or download a model unless the issue explicitly
 requires live-model validation.
+
+## Article chapter override
+
+This branch is the cumulative article chapter 1, `basic-chat`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.

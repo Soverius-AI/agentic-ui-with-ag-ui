@@ -76,6 +76,7 @@ export class MacroQuestStore {
   } satisfies AttachmentsConfig;
 
   constructor() {
+
     this.http
       .get<FriendDayLog[]>(mealLogUrl)
       .pipe(take(1))

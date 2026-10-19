@@ -30,17 +30,29 @@ export async function analyzeMealToolHandler(description: string, context?: Tool
       image_url: { url: `data:${image.mediaType};base64,${image.image}` },
     },
   ];
-  const response = await fetchAnalysis(content, context);
 
-  const payload = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  return {
-    ok: true,
-    isEstimate: true,
-    source: 'Photo estimate',
-    ...mealDraftSchema.parse(JSON.parse(payload.choices?.[0]?.message?.content ?? 'null')),
-  };
+  try {
+    const response = await fetchAnalysis(content, context);
+
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const meal = mealDraftSchema.parse(
+      JSON.parse(payload.choices?.[0]?.message?.content ?? 'null'),
+    );
+
+
+    return {
+      ok: true,
+      isEstimate: true,
+      source: 'Photo estimate',
+      ...meal,
+    };
+  } catch (error) {
+
+    throw error;
+  }
 }
 
 function handleImage(context?: ToolExecutionOptions) {
