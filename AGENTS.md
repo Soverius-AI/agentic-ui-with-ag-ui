@@ -27,4 +27,4 @@ requires live-model validation.
 
 ## Article chapter override
 
-This branch is the cumulative article chapter 3, `frontend-tool-calling`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.
+This branch is the cumulative article chapter 4, `backend-tool-calling`. The enabled registrations are intentional and supersede the starting-branch restrictions above. Preserve this chapter boundary.
