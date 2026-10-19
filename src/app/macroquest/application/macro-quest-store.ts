@@ -1,9 +1,10 @@
+import { MealDraftConfirmation } from '../ui/meal-draft-confirmation';
 import z from 'zod';
 import { HttpClient } from '@angular/common/http';
 import { Service, computed, inject, signal } from '@angular/core';
-import { connectAgentContext, registerFrontendTool, type AttachmentsConfig } from '@copilotkit/angular';
+import { connectAgentContext, registerFrontendTool, registerHumanInTheLoop, type AttachmentsConfig } from '@copilotkit/angular';
 import { take } from 'rxjs';
-import { MealDraft } from '../../../../contracts/meal-draft-schema';
+import { MealDraft, mealDraftSchema } from '../../../../contracts/meal-draft-schema';
 import { FriendDayLog } from '../domain/friend-day';
 import {
   FoodItemEdit,
@@ -94,6 +95,13 @@ export class MacroQuestStore {
       description: 'Switch to the next day',
       parameters: z.object({}),
       handler: async () => this.showNextDay(),
+    });
+
+    registerHumanInTheLoop({
+      name: 'add_meal_to_log',
+      description: 'Add the meal to the meal log.',
+      parameters: mealDraftSchema,
+      component: MealDraftConfirmation,
     });
 
     this.http

@@ -1,6 +1,6 @@
-# Article chapter 4: Backend Tool Calling
+# Article chapter 5: Human In The Loop
 
-This branch is cumulative: it contains chapters 1–4.
+This branch is cumulative: it contains chapters 1–5.
 
 Prepared helpers for later chapters may be present but are not registered yet.
 
